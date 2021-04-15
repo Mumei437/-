@@ -17,7 +17,7 @@ Game::Game()
 {
 	if (SDL_Init(SDL_INIT_VIDEO) != 0)
 	{
-		printf("SDLƒ‰ƒCƒuƒ‰ƒŠ‚Ì‰Šú‰»‚É¸”s‚µ‚Ü‚µ‚½B:%s\n", SDL_GetError());
+		printf("SDLãƒ©ã‚¤ãƒ–ãƒ©ãƒªã®åˆæœŸåŒ–ã«å¤±æ•—ã—ã¾ã—ãŸã€‚:%s\n", SDL_GetError());
 		exit(EXIT_FAILURE);
 	}
 
@@ -33,7 +33,7 @@ Game::Game()
 
 	if (!mWindow)
 	{
-		printf("ƒEƒBƒ“ƒhƒE‚Ìì¬‚É¸”s‚µ‚Ü‚µ‚½B:%s\n", SDL_GetError());
+		printf("ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ä½œæˆã«å¤±æ•—ã—ã¾ã—ãŸã€‚:%s\n", SDL_GetError());
 		exit(EXIT_FAILURE);
 	}
 
@@ -45,11 +45,11 @@ Game::Game()
 
 	if (!mRenderer)
 	{
-		printf("ƒŒƒ“ƒ_ƒ‰[‚Ìì¬‚É¸”s‚µ‚Ü‚µ‚½B:%s\n", SDL_GetError());
+		printf("ãƒ¬ãƒ³ãƒ€ãƒ©ãƒ¼ã®ä½œæˆã«å¤±æ•—ã—ã¾ã—ãŸã€‚:%s\n", SDL_GetError());
 		exit(EXIT_FAILURE);
 	}
 
-	//ƒtƒ@ƒCƒ‹ƒf[ƒ^‚Ì“Ç‚İ‚İ
+	//ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‡ãƒ¼ã‚¿ã®èª­ã¿è¾¼ã¿
 	char* buffer = nullptr;
 
 	int size = 0;
@@ -91,65 +91,72 @@ Game::Game()
 
 	if (mObject.GetWidth() != mIsTarget.GetWidth() || mObject.GetHeight() != mIsTarget.GetHeight())
 	{
-		std::cerr << "ƒTƒCƒYƒGƒ‰[‚ª”­¶‚µ‚Ü‚µ‚½B\n";
+		std::cerr << "ã‚µã‚¤ã‚ºã‚¨ãƒ©ãƒ¼ãŒç™ºç”Ÿã—ã¾ã—ãŸã€‚\n";
 		exit(EXIT_FAILURE);
 	}
 
 	int x = 0;
 	int y = 0;
-
 	for (int i = 0; buffer[i] != '\0'; i++)
 	{
+		
+			Object o = OBJ_UNNKOWN;
+			bool b = false;
+			//ã‚¹ãƒ†ãƒ¼ã‚¸ãƒ‡ãƒ¼ã‚¿ã®èª­ã¿è¾¼ã¿ã¨ãã®æƒ…å ±ã®å–å¾—
+			switch (buffer[i])
+			{
+			case ' ':
+				o = OBJ_SPACE;
+				b = false;
+				break;
+			case '.':
+				o = OBJ_SPACE;
+				b = true;
+				break;
+			case'#':
+				o = OBJ_WALL;
+				b = false;
+				break;
+			case 'o':
+				o = OBJ_BLOCK;
+				b = false;
+				break;
+			case'p':
+				o = OBJ_PLAYER;
+				b = false;
+				break;
+			case'O':
+				o = OBJ_BLOCK;
+				b = true;
+				break;
+			case 'P':
+				o = OBJ_PLAYER;
+				b = true;
+				break;
+			default:
+				//ä½•ã‚‚ã—ãªã„
+				break;
+			}
 
-		//ƒXƒe[ƒWƒf[ƒ^‚Ì“Ç‚İ‚İ‚Æ‚»‚Ìî•ñ‚Ìæ“¾
-		switch (buffer[i])
-		{
-		case ' ':
-			mObject(x, y) = OBJ_SPACE;
-			mIsTarget(x, y) = false;
-			x++;
-			break;
-		case '.':
-			mObject(x, y) = OBJ_SPACE;
-			mIsTarget(x, y) = true;
-			x++;
-			break;
-		case'#':
-			mObject(x, y) = OBJ_WALL;
-			mIsTarget(x, y) = false;
-			x++;
-			break;
-		case 'o':
-			mObject(x, y) = OBJ_BLOCK;
-			mIsTarget(x, y) = false;
-			x++;
-			break;
-		case'p':
-			mObject(x, y) = OBJ_PLAYER;
-			mIsTarget(x, y) = false;
-			x++;
-			break;
-		case'O':
-			mObject(x, y) = OBJ_BLOCK;
-			mIsTarget(x, y) = true;
-			x++;
-			break;
-		case 'P':
-			mObject(x, y) = OBJ_PLAYER;
-			mIsTarget(x, y) = true;
-			x++;
-			break;
-		case'\n':
-			y++;
-			x = 0;
-			break;
-		default:
-			//‰½‚à‚µ‚È‚¢
-			break;
-		}
+			if (o != OBJ_UNNKOWN)
+			{
+				if ((0 <= x && x < mObject.GetWidth()) && (0 <= y && y < mObject.GetHeight()))
+				{
+
+					mObject(x, y) = o;
+					mIsTarget(x, y) = b;
+					x++;
+					if (mObject.GetWidth() <= x)
+					{
+						x = 0;
+						y++;
+					}
+
+				}
+			}
 
 	}
-
+	
 	delete[] buffer;
 }
 
@@ -234,7 +241,7 @@ void Game::Update()
 	{
 		deltaTime = 0.05f;
 	}
-	//ƒvƒŒƒCƒ„[‚ÌÀ•WŒŸõ
+	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®åº§æ¨™æ¤œç´¢
 	int y = 0;
 	int x = 0;
 	for (y = 0; y < mObject.GetHeight(); y++)
@@ -251,39 +258,39 @@ void Game::Update()
 	}
 _BREAK:
 
-	//Ÿ‚ÌƒvƒŒƒCƒ„[‚ÌÀ•W
+	//æ¬¡ã®ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®åº§æ¨™
 	int ty = y + PlayerVector.y ;
 	int tx = x + PlayerVector.x ;
 
 	if (x != tx || y != ty)
 	{
-		//•A‚‚³‚ğ’´‚¦‚Ä‚¢‚È‚¢‚©ƒ`ƒFƒbƒN
+		//å¹…ã€é«˜ã•ã‚’è¶…ãˆã¦ã„ãªã„ã‹ãƒã‚§ãƒƒã‚¯
 		if ((ty < 0 || mObject.GetHeight() <= ty) || (tx < 0 || mObject.GetWidth() <= tx))
 		{
 			return;
 		}
-		//•Ç‚É‚Ô‚Â‚©‚Á‚Ä‚¢‚È‚¢‚©ƒ`ƒFƒbƒN
+		//å£ã«ã¶ã¤ã‹ã£ã¦ã„ãªã„ã‹ãƒã‚§ãƒƒã‚¯
 		else if (mObject(tx,ty) == OBJ_WALL)
 		{
 			return;
 		}
-		//Ÿ‚ÌÀ•W‚ªƒuƒƒbƒN‚Å‚ ‚éê‡
+		//æ¬¡ã®åº§æ¨™ãŒãƒ–ãƒ­ãƒƒã‚¯ã§ã‚ã‚‹å ´åˆ
 		else if (mObject(tx, ty) == OBJ_BLOCK)
 		{
-			//ƒuƒƒbƒN‚Ì‰Ÿ‚³‚ê‚½ê‡‚ÌÀ•W
+			//ãƒ–ãƒ­ãƒƒã‚¯ã®æŠ¼ã•ã‚ŒãŸå ´åˆã®åº§æ¨™
 			int bx = tx + PlayerVector.x;
 			int by = ty + PlayerVector.y;
-			//ƒuƒƒbƒN‚ª•A‚‚³‚ğ’´‚¦‚Ä‚¢‚È‚¢‚©ƒ`ƒFƒbƒN
+			//ãƒ–ãƒ­ãƒƒã‚¯ãŒå¹…ã€é«˜ã•ã‚’è¶…ãˆã¦ã„ãªã„ã‹ãƒã‚§ãƒƒã‚¯
 			if ((by < 0 || mObject.GetHeight() <= by) || (bx < 0 || mObject.GetWidth() <= bx))
 			{
 				return;
 			}
-			//ƒuƒƒbƒN‚ª•Ç‚É‚Ô‚Â‚©‚Á‚Ä‚¢‚È‚¢‚©ƒ`ƒFƒbƒN
+			//ãƒ–ãƒ­ãƒƒã‚¯ãŒå£ã«ã¶ã¤ã‹ã£ã¦ã„ãªã„ã‹ãƒã‚§ãƒƒã‚¯
 			if (mObject(bx, by) == OBJ_WALL|| mObject(bx, by) == OBJ_BLOCK)
 			{
 				return;
 			}
-			//ˆÚ“®ˆ—
+			//ç§»å‹•å‡¦ç†
 			else
 			{
 				mObject(bx, by) = OBJ_BLOCK;
@@ -291,7 +298,7 @@ _BREAK:
 				mObject(x, y) = OBJ_SPACE;
 			}
 		}
-		//ˆÚ“®ˆ—
+		//ç§»å‹•å‡¦ç†
 		else
 		{
 			mObject(tx, ty) = OBJ_PLAYER;
@@ -307,7 +314,7 @@ void Game::Output()
 
 	SDL_RenderClear(mRenderer);
 
-	/*‚±‚±‚©‚ç•`‰æ*/
+	/*ã“ã“ã‹ã‚‰æç”»*/
 
 	for (int y = 0; y < mObject.GetHeight(); y++)
 	{
@@ -361,11 +368,11 @@ void Game::Output()
 				}
 				break;
 			default:
-				//‰½‚à‚µ‚È‚¢
+				//ä½•ã‚‚ã—ãªã„
 				continue;
 				break;
 			}
-			//c‚É‰½‚à“ü‚Á‚Ä‚¢‚È‚¢(‰Šú‚ÌNULL‚Ì‚Ü‚Ü‚Ì)ê‡ˆÈŠO‚Ío—Í
+			//cã«ä½•ã‚‚å…¥ã£ã¦ã„ãªã„(åˆæœŸã®NULLã®ã¾ã¾ã®)å ´åˆä»¥å¤–ã¯å‡ºåŠ›
 			if (c != NULL)
 			{
 				printf("%c", c);
@@ -373,7 +380,7 @@ void Game::Output()
 
 			DrawBox(x, y, WINWIDTH / mObject.GetWidth(), WINHEIGHT / mObject.GetHeight());
 		}
-		//•‘S‚Ä‚ğs‚Á‚½‚ç‰üs
+		//å¹…å…¨ã¦ã‚’è¡Œã£ãŸã‚‰æ”¹è¡Œ
 		printf("\n");
 	}
 
@@ -385,7 +392,7 @@ void Game::Output()
 
 bool Game::IsClear()
 {
-	//‘S‚Ä‚ÌƒS[ƒ‹‚ÉƒuƒƒbƒN‚ªæ‚Á‚Ä‚¢‚È‚¢ê‡‚Ífalse‚»‚êˆÈŠO‚Ítrue
+	//å…¨ã¦ã®ã‚´ãƒ¼ãƒ«ã«ãƒ–ãƒ­ãƒƒã‚¯ãŒä¹—ã£ã¦ã„ãªã„å ´åˆã¯falseãã‚Œä»¥å¤–ã¯true
 	for (int y = 0; y < mObject.GetHeight(); y++)
 	{
 		for (int x = 0; x < mObject.GetWidth(); x++)
